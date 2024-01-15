@@ -28,6 +28,16 @@ html, body {
   color: #fff;
 }
 
+#logo img {
+  position: absolute;
+  float: left;
+  bottom: 0;
+  width: auto;
+  height: auto;
+  max-height: 50px;
+  max-width: auto;
+}
+
 a, a:hover, a:active, a:visited {
   text-decoration: none;
   color: inherit;
