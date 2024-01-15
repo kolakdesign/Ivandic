@@ -309,7 +309,7 @@ var APP_DATA = {
       "infoHotspots": []
     }
   ],
-  "name": "Project Title",
+  "name": "Ivandić",
   "settings": {
     "mouseViewMode": "drag",
     "autorotateEnabled": false,
