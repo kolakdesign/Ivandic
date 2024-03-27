@@ -20,6 +20,7 @@
   var bowser = window.bowser;
   var screenfull = window.screenfull;
   var data = window.APP_DATA;
+  var activeScene = null;
 
   // Grab elements from DOM.
   var panoElement = document.querySelector('#pano');
@@ -29,6 +30,11 @@
   var sceneListToggleElement = document.querySelector('#sceneListToggle');
   var autorotateToggleElement = document.querySelector('#autorotateToggle');
   var fullscreenToggleElement = document.querySelector('#fullscreenToggle');
+  // Dodati varijable za koristenje orijentacije uderadaj i minimape
+  var deviceOrientationToggleElement = document.querySelector('#deviceOrientationToggle');
+  var deviceOrientationControlMethod = new DeviceOrientationControlMethod();
+  var mapToggleElement = document.querySelector('#mapToggle');
+  var mapContainerElements = document.querySelectorAll('.map');
 
   // Detect desktop or mobile mode.
   if (window.matchMedia) {
@@ -78,7 +84,7 @@
       { cubeMapPreviewUrl: urlPrefix + "/" + data.id + "/preview.jpg" });
     var geometry = new Marzipano.CubeGeometry(data.levels);
 
-    var limiter = Marzipano.RectilinearView.limit.traditional(data.faceSize, 100*Math.PI/180, 120*Math.PI/180);
+    var limiter = Marzipano.RectilinearView.limit.traditional(data.faceSize, 100 * Math.PI / 180);
     var view = new Marzipano.RectilinearView(data.initialViewParameters, limiter);
 
     var scene = viewer.createScene({
@@ -120,6 +126,10 @@
   // Set handler for autorotate toggle.
   autorotateToggleElement.addEventListener('click', toggleAutorotate);
 
+  // Set handler for map toggle.
+  mapToggleElement.addEventListener('click', toggleMap);
+  mapToggleElement.classList.add('enabled');
+
   // Set up fullscreen mode, if supported.
   if (screenfull.enabled && data.settings.fullscreenButton) {
     document.body.classList.add('fullscreen-enabled');
@@ -146,16 +156,21 @@
   }
 
   // Set handler for scene switch.
-  scenes.forEach(function(scene) {
-    var el = document.querySelector('#sceneList .scene[data-id="' + scene.data.id + '"]');
-    el.addEventListener('click', function() {
-      switchScene(scene);
-      // On mobile, hide scene list after selecting a scene.
-      if (document.body.classList.contains('mobile')) {
-        hideSceneList();
-      }
-    });
+  scenes.forEach(function (scene) {
+    addMapMarker(scene);
+    var el = document.querySelector('#sceneList .scene .text[data-id="' + scene.data.id + '"]');
+    if (el !== null) {
+      el.addEventListener('click', function () {
+        switchScene(scene);
+        // On mobile, hide scene list after selecting a scene.
+        if (document.body.classList.contains('mobile')) {
+          hideSceneList();
+        }
+      });
+    }
   });
+
+  var markerList = document.querySelectorAll(".mark");
 
   // DOM elements for view controls.
   var viewUpElement = document.querySelector('#viewUp');
@@ -178,17 +193,30 @@
   controls.registerMethod('inElement',    new Marzipano.ElementPressControlMethod(viewInElement,  'zoom', -velocity, friction), true);
   controls.registerMethod('outElement',   new Marzipano.ElementPressControlMethod(viewOutElement, 'zoom',  velocity, friction), true);
 
+  // Register the custom control method.
+  controls.registerMethod('deviceOrientation', deviceOrientationControlMethod);
+
+  if (data.settings.deviceOrientationEnabled) {
+    deviceOrientationToggleElement.classList.add('enabled');
+    enable();
+  }
+  deviceOrientationToggleElement.addEventListener('click', toggleDeviceOrientation);
+
   function sanitize(s) {
     return s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;');
   }
 
   function switchScene(scene) {
     stopAutorotate();
-    scene.view.setParameters(scene.data.initialViewParameters);
+    var initialViewParameters = scene.data.initialViewParameters;
+    scene.view.setParameters(initialViewParameters);
+    activeScene = scene;
     scene.scene.switchTo();
     startAutorotate();
     updateSceneName(scene);
     updateSceneList(scene);
+    updateMapImage(scene);
+    updateMarker(scene);
   }
 
   function updateSceneName(scene) {
@@ -206,6 +234,29 @@
     }
   }
 
+  function updateMapImage(scene) {
+    //mapElement.setAttribute("src", scene.data.mapimage);
+    for (var i = 0; i < mapContainerElements.length; i++) {
+      var el = mapContainerElements[i];
+      if (el.getAttribute('id') === 'map' + scene.data.mapcontainer) {
+        el.classList.add('show');
+      } else {
+        el.classList.remove('show');
+      }
+    }
+  }
+
+  function updateMarker(scene) {
+    for (var i = 0; i < markerList.length; i++) {
+      var el = markerList[i];
+      if (el.getAttribute('data-id') === scene.data.id) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    }
+  }
+
   function showSceneList() {
     sceneListElement.classList.add('enabled');
     sceneListToggleElement.classList.add('enabled');
@@ -219,6 +270,55 @@
   function toggleSceneList() {
     sceneListElement.classList.toggle('enabled');
     sceneListToggleElement.classList.toggle('enabled');
+  }
+
+
+  function requestPermissionForIOS() {
+
+    window.DeviceOrientationEvent.requestPermission()
+      .then(response => {
+        if (response === 'granted') {
+          enableDeviceOrientation();
+        }
+      }).catch((e) => {
+      console.error(e);
+    });
+  }
+
+  function enableDeviceOrientation() {
+    deviceOrientationControlMethod.getPitch(function (err, pitch) {
+      if (!err) {
+        activeScene.view.setPitch(pitch);
+      }
+    });
+    controls.enableMethod('deviceOrientation');
+  }
+
+  function enable() {
+    if (!deviceOrientationToggleElement.classList.contains('enabled')) {
+      return;
+    }
+    if (window.DeviceOrientationEvent) {
+      if (typeof (window.DeviceOrientationEvent.requestPermission) === 'function') {
+        requestPermissionForIOS();
+      } else {
+        enableDeviceOrientation();
+      }
+    }
+  }
+
+  function disable() {
+    controls.disableMethod('deviceOrientation');
+  }
+
+  function toggleDeviceOrientation() {
+    if (deviceOrientationToggleElement.classList.contains('enabled')) {
+      deviceOrientationToggleElement.classList.remove('enabled');
+      disable();
+    } else {
+      deviceOrientationToggleElement.classList.add('enabled');
+      enable();
+    }
   }
 
   function startAutorotate() {
@@ -244,6 +344,36 @@
     }
   }
 
+  function showMap() {
+    document.getElementById('mapcontainer').style.display = 'block';
+  }
+
+  function hideMap() {
+    document.getElementById('mapcontainer').style.display = 'none';
+  }
+
+  function toggleMap() {
+    if (mapToggleElement.classList.contains('enabled')) {
+      mapToggleElement.classList.remove('enabled');
+      hideMap();
+    } else {
+      mapToggleElement.classList.add('enabled');
+      showMap();
+    }
+  }
+
+  function addMapMarker(scene) {
+    var spanElem = document.createElement('span');
+    spanElem.classList.add('marker-wrapper');
+    spanElem.setAttribute("id", scene.data.id);
+    spanElem.setAttribute("style", "left: " + scene.data.x + ";top: " + scene.data.y + ";");
+    spanElem.innerHTML = '<svg class="mark" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 10 10" version="1.1" fill-rule="evenodd" clip-rule="evenodd" data-id="' + scene.data.id + '"><circle cx="5" cy="5" r="5" /></svg>';
+    spanElem.addEventListener('click', function () {
+      switchScene(scene);
+    });
+    document.querySelector('#map' + scene.data.mapcontainer).appendChild(spanElem);
+  }
+
   function createLinkHotspotElement(hotspot) {
 
     // Create wrapper element to hold icon and tooltip.
@@ -264,8 +394,9 @@
     }
 
     // Add click event handler.
-    wrapper.addEventListener('click', function() {
-      switchScene(findSceneById(hotspot.target));
+    wrapper.addEventListener('click', function () {
+      const s = findSceneById(hotspot.target);
+      switchScene(s);
     });
 
     // Prevent touch and scroll events from reaching the parent element.
@@ -388,5 +519,5 @@
 
   // Display the initial scene.
   switchScene(scenes[0]);
-
+  hideMap()
 })();

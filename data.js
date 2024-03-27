@@ -1,8 +1,12 @@
 var APP_DATA = {
+  /* PROMJENA POLOŽAJA TOČKICA XY, MAP CONTAINER 1 ILI 2 POZIVA NA SLIKU MAPE*/
   "scenes": [
     {
       "id": "0-ulaz",
       "name": "Ulaz",
+      "mapcontainer": "1",
+      "x": "46%",
+      "y": "110%",
       "levels": [
         {
           "tileSize": 256,
@@ -16,13 +20,13 @@ var APP_DATA = {
         {
           "tileSize": 512,
           "size": 1024
-        }
+        },
       ],
       "faceSize": 1024,
       "initialViewParameters": {
-        "pitch": 0,
-        "yaw": 0,
-        "fov": 1.5707963267948966
+        "yaw": 0.10105750243915246,
+        "pitch": 0.09393712069449833,
+        "fov": 1.4742329502908464
       },
       "linkHotspots": [
         {
@@ -36,6 +40,12 @@ var APP_DATA = {
           "pitch": 0.058526854054850475,
           "rotation": 0,
           "target": "2-hodnik"
+        },
+        {
+          "yaw": -0.162435342490110912,
+          "pitch": 0.058526854054850475,
+          "rotation": -1,
+          "target": "8-wc"
         }
       ],
       "infoHotspots": []
@@ -43,6 +53,9 @@ var APP_DATA = {
     {
       "id": "1-radna-soba",
       "name": "Radna soba",
+      "mapcontainer": "1",
+      "x": "42%",
+      "y": "62%",
       "levels": [
         {
           "tileSize": 256,
@@ -77,6 +90,9 @@ var APP_DATA = {
     {
       "id": "2-hodnik",
       "name": "Hodnik",
+      "mapcontainer": "1",
+      "x": "55%",
+      "y": "58%",
       "levels": [
         {
           "tileSize": 256,
@@ -123,6 +139,9 @@ var APP_DATA = {
     {
       "id": "3-dnevni-boravak",
       "name": "Dnevni boravak",
+      "mapcontainer": "1",
+      "x": "75%",
+      "y": "52%",
       "levels": [
         {
           "tileSize": 256,
@@ -136,17 +155,21 @@ var APP_DATA = {
         {
           "tileSize": 512,
           "size": 1024
+        },
+        {
+          "tileSize": 512,
+          "size": 2048
         }
       ],
-      "faceSize": 1024,
+      "faceSize": 2048,
       "initialViewParameters": {
-        "yaw": 1.6248007693537962,
-        "pitch": 0.06327605318085361,
-        "fov": 1.3662485491026943
+        "yaw": 0,
+        "pitch": 0,
+        "fov": 1.5707963267948966
       },
       "linkHotspots": [
         {
-          "yaw": 1.7736133222558141,
+          "yaw": -0.30036133222558141,
           "pitch": 0.15021345066091385,
           "rotation": 0,
           "target": "4-kuhinja"
@@ -163,6 +186,9 @@ var APP_DATA = {
     {
       "id": "4-kuhinja",
       "name": "Kuhinja",
+      "mapcontainer": "1",
+      "x": "46%",
+      "y": "75%",
       "levels": [
         {
           "tileSize": 256,
@@ -176,9 +202,13 @@ var APP_DATA = {
         {
           "tileSize": 512,
           "size": 1024
+        },
+        {
+          "tileSize": 512,
+          "size": 2048
         }
       ],
-      "faceSize": 1024,
+      "faceSize": 2048,
       "initialViewParameters": {
         "pitch": 0,
         "yaw": 0,
@@ -186,7 +216,7 @@ var APP_DATA = {
       },
       "linkHotspots": [
         {
-          "yaw": -1.4126166753828038,
+          "yaw": 0.1126166753828038,
           "pitch": 0.21397090244122907,
           "rotation": 0,
           "target": "3-dnevni-boravak"
@@ -197,8 +227,11 @@ var APP_DATA = {
     {
       "id": "5-stubite",
       "name": "Stubište",
+      "mapcontainer": "1",
+      "x": "40%",
+      "y": "75%",
       "levels": [
-        {
+      {
           "tileSize": 256,
           "size": 256,
           "fallbackOnly": true
@@ -237,6 +270,9 @@ var APP_DATA = {
     {
       "id": "6-spavaa_garderoba",
       "name": "Spavaća_Garderoba",
+      "mapcontainer": "1",
+      "x": "29%",
+      "y": "75%",
       "levels": [
         {
           "tileSize": 256,
@@ -266,6 +302,12 @@ var APP_DATA = {
           "target": "7-spavaa"
         },
         {
+          "yaw": -1.0548395960660386,
+          "pitch": 0.14309469806156727,
+          "rotation": 0,
+          "target": "9-kupaonica"
+        },
+        {
           "yaw": -3.0548395960660386,
           "pitch": 0.14309469806156727,
           "rotation": 0,
@@ -277,6 +319,9 @@ var APP_DATA = {
     {
       "id": "7-spavaa",
       "name": "Spavaća",
+      "mapcontainer": "1",
+      "x": "29%",
+      "y": "45%",
       "levels": [
         {
           "tileSize": 256,
@@ -304,16 +349,105 @@ var APP_DATA = {
           "pitch": 0.14234802451086281,
           "rotation": 0,
           "target": "6-spavaa_garderoba"
+        },
+        {
+          "yaw": 1.620919852842074,
+          "pitch": 0.14234802451086281,
+          "rotation": 1,
+          "target": "9-kupaonica"
         }
       ],
       "infoHotspots": []
-    }
+    },
+    {
+      "id": "8-wc",
+      "name": "WC",
+      "mapcontainer": "2",
+      "x": "39%",
+      "y": "59%",
+      "levels": [
+        {
+          "tileSize": 256,
+          "size": 256,
+          "fallbackOnly": true
+        },
+        {
+          "tileSize": 512,
+          "size": 512
+        },
+        {
+          "tileSize": 512,
+          "size": 1024
+        },
+        {
+          "tileSize": 512,
+          "size": 2048
+        }
+      ],
+      "faceSize": 2048,
+      "initialViewParameters": {
+        "pitch": 0,
+        "yaw": 0,
+        "fov": 1.5707963267948966
+      },
+      "linkHotspots": [
+        {
+          "yaw": -2.8561039912518225,
+          "pitch": 0.1647900913587318,
+          "rotation": 0,
+          "target": "2-hodnik"
+        },
+       ],
+      "infoHotspots": []
+    },
+    {
+      "id": "9-kupaonica",
+      "name": "Kupaonica",
+      "mapcontainer": "2",
+      "x": "46%",
+      "y": "66%",
+      "levels": [
+        {
+          "tileSize": 256,
+          "size": 256,
+          "fallbackOnly": true
+        },
+        {
+          "tileSize": 512,
+          "size": 512
+        },
+        {
+          "tileSize": 512,
+          "size": 1024
+        },
+        {
+          "tileSize": 512,
+          "size": 2048
+        }
+      ],
+      "faceSize": 2048,
+      "initialViewParameters": {
+        "pitch": 0,
+        "yaw": 0,
+        "fov": 1.5707963267948966
+      },
+      "linkHotspots": [
+        {
+          "yaw": 1.77261153280966823,
+          "pitch": 0.0897621375525226,
+          "rotation": 6.283185307179586,
+          "target": "6-spavaa_garderoba"
+        },
+              ],
+      "infoHotspots": []
+    },
   ],
   "name": "Ivandić",
   "settings": {
     "mouseViewMode": "drag",
-    "autorotateEnabled": false,
-    "fullscreenButton": false,
-    "viewControlButtons": false
+    "deviceOrientationEnabled": true,
+    "autorotateEnabled": true,
+    "fullscreenButton": true,
+    "viewControlButtons": false,
   }
 };
